@@ -68,9 +68,19 @@ namespace Assignment
             new Monster("Dawnling", 150, 110, 100),
             new Monster("The Boss", 200, 150, 400)
         };
-        private static bool _started = false;
+        private static string _player;
+        private static List<Fight> _fights = new List<Fight>();
         public static void Start()
         {
+            Console.WriteLine("Who is playing?");
+            string name = Console.ReadLine();
+            while (string.IsNullOrWhiteSpace(name) || !name.All(c => char.IsLetterOrDigit(c)))
+            {
+                Console.WriteLine("Please enter a valid name with that is all letters or numbers");
+                name = Console.ReadLine();
+            }
+            _player = name;
+            Console.WriteLine($"Welcome {_player}");
             bool continueGame = true;
             while (continueGame)
             {
@@ -79,13 +89,14 @@ namespace Assignment
         }
         public static void MainMenu()
         {
-            Console.WriteLine("\n\nMain Menu");
+            Console.WriteLine("\nMain Menu");
             Console.WriteLine("To select an option input the number next to it");
             Console.WriteLine("> 1: Play");
             Console.WriteLine("> 2: View Heroes");
-            Console.WriteLine("> 3: Quit");
+            Console.WriteLine("> 3: Display Stats");
+            Console.WriteLine("> 4: Quit");
             string menuInput = Console.ReadLine();
-            bool validInput = ValidateInput(menuInput, 3);
+            bool validInput = ValidateInput(menuInput, 4);
             while (!validInput)
             {
                 Console.WriteLine("Please select a valid option");
@@ -103,6 +114,9 @@ namespace Assignment
                     hero.GetStats();
                     break;
                 case 3:
+                    DisplayStats();
+                    break;
+                case 4:
                     Quit();
                     break;
             }
@@ -119,7 +133,10 @@ namespace Assignment
                     $"\n> Health: {monster.OriginalHealth}" +
                     $"\n> Attack: {monster.Strength}" +
                     $"\n> Defense: {monster.Defense}");
-                Fight battle = new Fight(hero, monster);
+                Fight battle = new Fight(hero, monster, _player);
+                _fights.Add(battle);
+                battle.Winner = monster.Name;
+                battle.Loser = _player;
                 while (monster.CurrentHealth > 0 && hero.CurrentHealth > 0)
                 {
                     Console.WriteLine();
@@ -129,9 +146,11 @@ namespace Assignment
                         battle.MonsterTurn();
                     } else
                     {
-                        Console.WriteLine($"You have defeated {monster.Name}");
+                        Console.WriteLine($"Congratulations {_player}! You have defeated {monster.Name}");
+                        battle.Winner = _player;
+                        battle.Loser = monster.Name;
                         hero.ResetHealth();
-                        hero.Coins += 20;
+                        hero.Coins += 15;
                         bool leave = false;
                         Console.WriteLine("\nYou have three options now");
                         while (!leave)
@@ -183,6 +202,14 @@ namespace Assignment
                     ResetGame(hero);
                     break;
                 }
+            }
+        }
+        public static void DisplayStats()
+        {
+            Console.WriteLine($"You have fought {_fights.Count} battles");
+            foreach (Fight fight in _fights)
+            {
+                Console.WriteLine($"{fight.Winner} beat {fight.Loser}");
             }
         }
         public static void Shop(Hero hero)

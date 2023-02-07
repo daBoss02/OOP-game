@@ -10,6 +10,9 @@ namespace Assignment
     {
         private Hero _hero;
         private Monster _monster;
+        private string _player;
+        public string Winner;
+        public string Loser;
         public void HeroTurn()
         {
             int attack = _hero.Attack();
@@ -24,10 +27,11 @@ namespace Assignment
             _hero.Defend(attack);
         }
 
-        public Fight(Hero hero, Monster monster)
+        public Fight(Hero hero, Monster monster, string player)
         {
             _hero = hero;
             _monster = monster;
+            _player = player;
         }
     }
 }

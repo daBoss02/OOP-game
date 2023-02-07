@@ -174,7 +174,7 @@ namespace Assignment
         }
         public int Attack()
         {
-            return _baseStrength + _equippedWeapon.Attack() + (_baseStrength * (_agility + _equippedWeapon.Agility) / 20);
+            return _baseStrength + _equippedWeapon.Attack() + (_baseStrength * (_agility + _equippedWeapon.Agility) / 32);
 
         }
         public void Reset()
